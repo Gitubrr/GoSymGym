@@ -25,6 +25,28 @@ type RepoInfo struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 }
 
+func (info RepoInfo) String() string {
+	var result string
+
+	result += fmt.Sprintf("Repository name:\t%s\n", info.RepoName)
+	if info.Description != "" {
+		result += fmt.Sprintf("Description:\t\t%s\n", info.Description)
+	} else {
+		result += "Description:\t\tThis repository has no description\n"
+	}
+	result += fmt.Sprintf("Stars:\t\t\t%d\n", info.Stars)
+	result += fmt.Sprintf("Forks:\t\t\t%d\n", info.Forks)
+	result += fmt.Sprintf("Issues:\t\t\t%d\n", info.Issues)
+	if info.Language != "" {
+		result += fmt.Sprintf("Language:\t\t%s\n", info.Language)
+	}
+	result += fmt.Sprintf("Created:\t\t%s\n", info.CreatedAt.Format("2006-01-02"))
+	result += fmt.Sprintf("Updated:\t\t%s\n", info.UpdatedAt.Format("2006-01-02"))
+	result += fmt.Sprintf("URL:\t\t\t%s\n", info.HTMLURL)
+
+	return result
+}
+
 type Client struct {
 	httpClient *http.Client
 	baseURL    string
@@ -32,12 +54,13 @@ type Client struct {
 	userAgent  string
 }
 
-func NewClient() *Client {
+func NewClient(token string, timeout int) *Client {
 	return &Client{
 		httpClient: &http.Client{
-			Timeout: 10 * time.Second,
+			Timeout: time.Duration(timeout) * time.Second,
 		},
 		baseURL:   "https://api.github.com",
+		token:     token,
 		userAgent: "GoSymGym-CLI/1.0",
 	}
 }
@@ -45,7 +68,7 @@ func NewClient() *Client {
 func (client *Client) GetRepoInfo(owner, repo string) (*RepoInfo, error) {
 	url := fmt.Sprintf("%s/repos/%s/%s", client.baseURL, owner, repo)
 
-	req, err := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, fmt.Errorf("creating request: %w", err)
 	}
@@ -79,12 +102,4 @@ func (client *Client) GetRepoInfo(owner, repo string) (*RepoInfo, error) {
 	default:
 		return nil, fmt.Errorf("unexpected status: %d", resp.StatusCode)
 	}
-}
-
-func (client *Client) SetToken(token string) {
-	client.token = token
-}
-
-func (client *Client) SetTimeout(timeout time.Duration) {
-	client.httpClient.Timeout = timeout
 }

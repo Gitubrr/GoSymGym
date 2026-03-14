@@ -4,10 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"time"
 
 	"github.com/Gitubrr/GoSymGym/internal/client"
-	"github.com/Gitubrr/GoSymGym/internal/formatter"
 )
 
 const (
@@ -15,22 +13,25 @@ const (
 	reset = "\033[0m"
 )
 
+func printUsage() {
+	out := flag.CommandLine.Output()
+	fmt.Fprintf(out, "GitHub Repository Info CLI\n\n")
+	fmt.Fprintf(out, "usage: GoSymGym [-h] -o REPO_OWNER -n REPO_NAME [-t GITHUB_TOKEN] [-T TIMEOUT]\n\n")
+	fmt.Fprintf(out, "options:\n")
+	fmt.Fprintf(out, "\t-h, --help\t\tshow this help message and exit\n")
+	fmt.Fprintf(out, "\t-o REPO_OWNER\t\tName of the repository owner\n")
+	fmt.Fprintf(out, "\t-n REPO_NAME\t\tRepository name\n")
+	fmt.Fprintf(out, "\t-t GITHUB_TOKEN\t\tPersonal access token\n")
+	fmt.Fprintf(out, "\t-T TIMEOUT\t\tMaximum response time sec\n")
+}
+
 func main() {
 	ownerFlag := flag.String("o", "", "")
 	nameFlag := flag.String("n", "", "")
 	tokenFlag := flag.String("t", "", "")
 	timeoutFlag := flag.Int("T", 10, "")
 
-	flag.Usage = func() {
-		fmt.Fprintf(flag.CommandLine.Output(), "GitHub Repository Info CLI\n\n")
-		fmt.Fprintf(flag.CommandLine.Output(), "usage: GoSymGym [-h] -o REPO_OWNER -n REPO_NAME [-t GITHUB_TOKEN] [-T TIMEOUT]\n\n")
-		fmt.Fprintf(flag.CommandLine.Output(), "options:\n")
-		fmt.Fprintf(flag.CommandLine.Output(), "\t-h, --help\t\tshow this help message and exit\n")
-		fmt.Fprintf(flag.CommandLine.Output(), "\t-o REPO_OWNER\t\tName of the repository owner\n")
-		fmt.Fprintf(flag.CommandLine.Output(), "\t-n REPO_NAME\t\tRepository name\n")
-		fmt.Fprintf(flag.CommandLine.Output(), "\t-t GITHUB_TOKEN\t\tPersonal access token\n")
-		fmt.Fprintf(flag.CommandLine.Output(), "\t-T TIMEOUT\t\tMaximum response time sec\n")
-	}
+	flag.Usage = printUsage
 
 	flag.Parse()
 
@@ -45,13 +46,7 @@ func main() {
 	}
 	timeout = *timeoutFlag
 
-	client := client.NewClient()
-	if token != "" {
-		client.SetToken(token)
-	}
-	if timeout != 10 {
-		client.SetTimeout(time.Duration(timeout) * time.Second)
-	}
+	client := client.NewClient(token, timeout)
 
 	info, err := client.GetRepoInfo(repoOwner, repoName)
 	if err != nil {
@@ -59,5 +54,5 @@ func main() {
 		os.Exit(1)
 	}
 
-	formatter.PrintRepoInfo(info)
+	fmt.Println(info)
 }

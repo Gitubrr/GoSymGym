@@ -2,7 +2,6 @@
 
 [![Go Version](https://img.shields.io/badge/Go-1.22%2B-00ADD8?logo=go)](https://golang.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![CI](https://github.com/Gitubrr/GoSymGym/actions/workflows/ci.yml/badge.svg)](https://github.com/Gitubrr/GoSymGym/actions/workflows/ci.yaml)
 
 This is homework for the Go course.
 
