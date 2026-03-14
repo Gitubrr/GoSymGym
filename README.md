@@ -6,7 +6,7 @@
 
 This is homework for the Go course.
 
-**GoSymGym** is a CLI tool for getting detailed information about GitHub repositories directly from the terminal. It displays stars, forks, issue count, language, creation and update dates, and a link to the repository.
+**GoSymGym** is a CLI tool for getting information about GitHub repositories directly from the terminal. It displays stars, forks, issue count, language, creation and update dates, and a link to the repository.
 
 ---
 
@@ -27,7 +27,7 @@ cd GoSymGym
 ```
 Build the binary:
 ```bash
-go build -o GoSymGym ./cmd/GoSymGym
+go build -o GoSymGym ./cmd
 ```
 
 ## Usage
